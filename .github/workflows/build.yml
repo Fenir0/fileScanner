@@ -3,7 +3,7 @@ name: 'Build&Release'
 on:
     push:
         branches:
-            - lab7
+            - main
 
 jobs:
     create_release:
