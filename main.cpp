@@ -57,8 +57,8 @@ void setDefaultParameters(){
 
 int main(int argc, char* argv []){
     setDefaultParameters();
-    std::cout << argc << '\n';
-    for(int i = 0; i < argc; i++){
+    std::cout << "Set parameters`" << '\n';
+    for(int i = 1; i < argc; i++){
         std::cout << argv[i] << '\n';
     }
 
@@ -67,6 +67,7 @@ int main(int argc, char* argv []){
             std::cout << "Bad parameter: " << argv[i] << '\n';
         }
     }
+    std::cout << "Scan begins\n";
     Scanner::runScan();
     return 0;
 }
