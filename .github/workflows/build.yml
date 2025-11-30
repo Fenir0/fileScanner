@@ -1,0 +1,64 @@
+name: 'Build&Release'
+
+on:
+    push:
+        branches:
+            - lab7
+
+jobs:
+    create_release:
+        name: Create Release
+        runs-on: ubuntu-22.04
+        permissions: write-all
+        outputs:
+            upload_url: ${{steps.create_release.outputs.upload_url}}
+        steps:
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                tag_name: ${{ github.run_number }}
+                release_name: Release ${{ github.run_number }}
+                draft: false
+                prerelease: false
+    build_release:
+        name: Build release on ${{matrix.os}}
+        needs: create_release
+        permissions: write-all
+        strategy:
+            matrix:
+                os: [ubuntu-22.04]
+                include:
+                    - os: ubuntu-22.04
+                      release-suffix: ubuntu
+                    - os: windows-latest
+                      release-suffix: windows
+        runs-on: ${{matrix.os}}
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                submodules: true
+            - name: Linux Build
+              if: matrix.os == 'ubuntu-22.04'
+              run: |
+                sudo apt install -y libboost-all-dev
+                sudo apt install -y libfl-dev
+                cmake . -DPATCH_VERSION=${{ github.run_number }}
+                cmake --build . --target package
+            
+            - name: Linux Upload to Release
+              if: matrix.os == 'ubuntu-22.04'
+              uses: actions/upload-release-asset@v1
+              env:
+                GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+              with:
+                upload_url: ${{ needs.create_release.outputs.upload_url }}
+                asset_path: ./lab7-0.0.${{ github.run_number }}-Linux.deb
+                asset_name: lab7-0.0.${{ github.run_number }}-Linux.deb
+                asset_content_type: application/vnd.debian.binary-package
+
+            
+
+
