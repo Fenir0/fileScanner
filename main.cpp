@@ -4,6 +4,7 @@
 
 void add_param(std::string param_name, std::string prm){
     if(param_name == "dir"){
+        parameters::dirs.clear();
         parameters::dirs.push_back(prm);
     }
     if(param_name == "x_dir"){
@@ -56,6 +57,10 @@ void setDefaultParameters(){
 
 int main(int argc, char* argv []){
     setDefaultParameters();
+    std::cout << argc << '\n';
+    for(int i = 0; i < argc; i++){
+        std::cout << argv[i] << '\n';
+    }
 
     for(size_t i = 1; i < argc; ++i){
         if(!parameterCheck(std::string(argv[i]))){

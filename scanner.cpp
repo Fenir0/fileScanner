@@ -108,6 +108,12 @@ void Scanner::runScan(){
         for(; begin != end; ++begin){
             boost::filesystem::file_status fs = boost::filesystem::status(*begin);
             std::cout << "Checking file: " << *begin << '\n';
+            
+            // if file is excluded
+            if(std::find(parameters::x_dirs.begin(),parameters::x_dirs.end(), *begin) != parameters::x_dirs.end()){
+                std::cout << *begin << " skipped\n";
+                continue;
+            }
 
             // If this is a directory
             if(fs.type() == boost::filesystem::directory_file){
@@ -118,11 +124,6 @@ void Scanner::runScan(){
             }
         /* check for parameters settings */ 
 
-            // if file is excluded
-            if(std::find(parameters::x_dirs.begin(),parameters::x_dirs.end(), *begin) != parameters::x_dirs.end()){
-                std::cout << *begin << " skipped\n";
-                continue;
-            }
             // if file is too small
             if(boost::filesystem::file_size(*begin) < parameters::min_size){
                 std::cout << *begin << " skipped\n";
